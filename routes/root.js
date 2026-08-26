@@ -1,11 +1,8 @@
 // const data = { phones: ['+123'], domains: ['test.com'] };
 export default async function (fastify, opts) {
-  fastify.get('/hello', async function (request, reply) {
-  // Извлекаем параметр name из query-строки. 
-  // Если он не передан (undefined), используем значение по умолчанию 'World'
+  fastify.get('/hello', async function (request, reply) {  
   const name = request.query.name || 'World'
-  
-  // Отправляем приветствие обратно пользователю
+
   reply.send(`Hello, ${name}!`)
 })
   // fastify.get("/", async function (request, reply) {
