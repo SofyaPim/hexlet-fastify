@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Eta</title>
+</head>
+<body>
+
+  <header> 
+   <h1>Лейауты в Eta</h1>
+    <h2>КиноПортал на Eta</h2>
+    <nav>
+      <ul style="display: flex; gap: 15px; list-style: none; padding: 0;">
+        <li><a href="/">Мультфильмы</a></li>
+        <li><a href="/movies">Фильмы</a></li>
+        <li><a href="/series">Сериалы</a></li>
+      </ul>
+    </nav>
+  </header>
+ <%~ it.body %>
+ <footer>
+   <a href="https://github.com/SofyaPim/hexlet-fastify">SofyaPim/hexlet-fastify</a>
+ </footer>
+</body>
+</html>

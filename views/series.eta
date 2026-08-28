@@ -1,0 +1,15 @@
+<% layout("./layouts/page.eta") %>
+
+<h2><%= it.title %></h2> 
+
+<ol>
+  <% it.series.forEach((show) => { %>
+    <li>
+     
+      <a href="/serie/<%= show.id %>"><strong><%= show.title %></strong></a> 
+    </li>
+  <% }) %>
+</ol>
+
+
+<p><a href="/">← На главную</a></p>

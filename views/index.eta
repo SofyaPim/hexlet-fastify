@@ -1,0 +1,14 @@
+<!-- views/index.eta -->
+<% layout("./layouts/page.eta") %>
+
+<h2><%= it.title %></h2> 
+
+<ol>
+  <% it.cartoons.forEach((cartoon) => { %>
+    <li>
+    
+      <a href="/cartoon/<%= cartoon.id %>"><strong><%= cartoon.title %></strong></a> 
+
+    </li>
+  <% }) %>
+</ol>

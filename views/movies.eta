@@ -1,0 +1,17 @@
+<% layout("./layouts/page.eta") %>
+
+<h2><%= it.title %></h2> 
+
+<ol>
+  <% it.movies.forEach((movie) => { %>
+    <li>
+     
+      <a href="/movie/<%= movie.id %>"><strong><%= movie.title %></strong></a> 
+   
+    </li>
+  <% }) %>
+</ol>
+
+
+
+<p><a href="/">← На главную</a></p>

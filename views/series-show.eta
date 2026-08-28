@@ -1,0 +1,10 @@
+<% layout("./layouts/page.eta") %>
+
+<h2>Детальная информация о сериале</h2>
+<div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; max-width: 400px; margin-bottom: 15px;">
+  <h3><%= it.show.title %></h3>
+  <p><strong>Рейтинг проекта:</strong> <span style="color: orange; font-weight: bold;"><%= it.show.rating %></span></p>
+  <p><strong>Телесеть / Платформа:</strong> <%= it.show.network %></p>
+</div>
+
+<p><a href="/series">← Назад к списку сериалов</a></p>

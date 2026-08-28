@@ -1,0 +1,10 @@
+<% layout("./layouts/page.eta") %>
+
+<h2>Подробнее о мультфильме</h2>
+<div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; max-width: 400px;">
+  <h3><%= it.cartoon.title %></h3>
+  <p><strong>Год выпуска:</strong> <%= it.cartoon.year %></p>
+  <p><strong>Мировые сборы:</strong> <span style="color: green; font-weight: bold;"><%= it.cartoon.boxOffice %></span></p>
+</div>
+
+<p><a href="/">← Вернуться к списку</a></p>
