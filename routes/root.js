@@ -5,15 +5,15 @@ const topCartoons = [
   { id: 3, title: "Братья Супер Марио в кино (The Super Mario Bros. Movie)", boxOffice: "$1.36 млрд", year: 2023 },
 ];
 const topMovies = [
-  { id: 1, title: 'Аватар (Avatar)', boxOffice: '$2.92 млрд', year: 2009 },
-  { id: 2, title: 'Мстители: Финал (Avengers: Endgame)', boxOffice: '$2.79 млрд', year: 2019 },
-  { id: 3, title: 'Аватар: Путь воды (Avatar: The Way of Water)', boxOffice: '$2.32 млрд', year: 2022 }
+  { id: 1, title: "Аватар (Avatar)", boxOffice: "$2.92 млрд", year: 2009 },
+  { id: 2, title: "Мстители: Финал (Avengers: Endgame)", boxOffice: "$2.79 млрд", year: 2019 },
+  { id: 3, title: "Аватар: Путь воды (Avatar: The Way of Water)", boxOffice: "$2.32 млрд", year: 2022 },
 ];
 
 const topSeries = [
-  { id: 1, title: 'Игра престолов (Game of Thrones)', rating: '9.2', network: 'HBO' },
-  { id: 2, title: 'Во все тяжкие (Breaking Bad)', rating: '9.5', network: 'AMC' },
-  { id: 3, title: 'Очень странные дела (Stranger Things)', rating: '8.7', network: 'Netflix' }
+  { id: 1, title: "Игра престолов (Game of Thrones)", rating: "9.2", network: "HBO" },
+  { id: 2, title: "Во все тяжкие (Breaking Bad)", rating: "9.5", network: "AMC" },
+  { id: 3, title: "Очень странные дела (Stranger Things)", rating: "8.7", network: "Netflix" },
 ];
 
 const users = {
@@ -51,65 +51,98 @@ export default async function (fastify, opts) {
     res.send(`User ID: ${user.id}; Post Text: ${post.text}`);
   });
 
-  fastify.get('/', async function (request, reply) {
+  fastify.get("/", async function (request, reply) {
     const data = {
-      title: 'Топ кассовых мультфильмов в мире',
-      cartoons: topCartoons
+      title: "Топ кассовых мультфильмов в мире",
+      cartoons: topCartoons,
     };
 
-    return reply.view('index.eta', data);
+    return reply.view("index.eta", data);
   });
- fastify.get('/cartoon/:id', async function (request, reply) {
+  fastify.get("/cartoon/:id", async function (request, reply) {
     const { id } = request.params;
     const cartoon = topCartoons.find((c) => c.id === Number(id));
     if (!cartoon) {
-      return reply.status(404).send('Мультфильм не найден');
+      return reply.status(404).send("Мультфильм не найден");
     }
-    return reply.view('show.eta', { cartoon });
+    return reply.view("show.eta", { cartoon });
   });
 
-    // Маршрут для фильмов
-  fastify.get('/movies', async function (request, reply) {
+  // Маршрут для фильмов
+  fastify.get("/movies", async function (request, reply) {
     const data = {
-      title: 'Топ крутых фильмов в истории',
-      movies: topMovies
+      title: "Топ крутых фильмов в истории",
+      movies: topMovies,
     };
-    return reply.view('movies.eta', data);
+    return reply.view("movies.eta", data);
   });
-    // Страница конкретного фильма
-  fastify.get('/movie/:id', async function (request, reply) {
+  // Страница конкретного фильма
+  fastify.get("/movie/:id", async function (request, reply) {
     const { id } = request.params;
     const movie = topMovies.find((m) => m.id === Number(id));
 
     if (!movie) {
-      return reply.status(404).send('Фильм не найден');
+      return reply.status(404).send("Фильм не найден");
     }
 
-    return reply.view('movie-show.eta', { movie });
+    return reply.view("movie-show.eta", { movie });
   });
-
-
-
 
   // Маршрут для сериалов
-  fastify.get('/series', async function (request, reply) {
+  fastify.get("/series", async function (request, reply) {
     const data = {
-      title: 'Легендарные сериалы с высоким рейтингом',
-      series: topSeries
+      title: "Легендарные сериалы с высоким рейтингом",
+      series: topSeries,
     };
-    return reply.view('series.eta', data);
+    return reply.view("series.eta", data);
   });
   // Страница конкретного сериала
-  fastify.get('/serie/:id', async function (request, reply) {
+  fastify.get("/serie/:id", async function (request, reply) {
     const { id } = request.params;
     const show = topSeries.find((s) => s.id === Number(id));
 
     if (!show) {
-      return reply.status(404).send('Сериал не найден');
+      return reply.status(404).send("Сериал не найден");
     }
 
-    return reply.view('series-show.eta', { show });
+    return reply.view("series-show.eta", { show });
   });
+  // уязвимости
+  fastify.get("/xss-test", async function (request, reply) {
+    const { id } = request.query;
+
+    if (!id) {
+      reply.type("text/html; charset=utf-8");
+      return reply.send("Передайте ?id=");
+    }
+
+    // 1. СНАЧАЛА ДЛЯ ПРОВЕРКИ УЯЗВИМОСТИ: отдаем как есть
+    // return reply.type('text/html; charset=utf-8').send(`Идентификатор пользователя: ${id}`);
+
+    // // 2. ДЛЯ ЗАКРЫТИЯ УЯЗВИМОСТИ (как в теории): экранируем спецсимволы
+    const escapedId = id.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    reply.type("text/html;charset=utf-8");
+    return reply.send(`Идентификатор пользователя: ${escapedId}`);
+  });
+
+    // 1. Хук проверки источника запроса (preHandler) из урока
+  fastify.addHook('preHandler', async (request, reply) => {
+    if (request.method === 'POST') {
+      const secFetchSite = request.headers['sec-fetch-site'];
+
+      // Если запрос пришел со стороннего сайта (cross-site), отдаем 403 Forbidden
+      if (secFetchSite === 'cross-site') {
+        return reply.status(403).send('Forbidden');
+      }
+    }
+  });
+
+  // 2. Обработчик POST-запроса, который меняет данные
+  fastify.post('/change-data', async function (request, reply) {
+    return reply.send('Данные изменены успешно!');
+  });
+
   // fastify.get("/", async function (request, reply) {
   //   reply.send("Welcome to Hexlet!");
   // });
