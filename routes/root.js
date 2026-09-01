@@ -71,6 +71,7 @@ export default async function (fastify, opts) {
   fastify.post(
     "/users",
     {
+      name: "createUser",
       attachValidation: true,
       schema: {
         body: yup.object({       
@@ -104,6 +105,7 @@ export default async function (fastify, opts) {
           password,
           passwordConfirmation,
           error: request.validationError,
+          reverse: fastify.reverse.bind(fastify),
         };
 
         return reply.view("/users/new", data);
@@ -114,39 +116,36 @@ export default async function (fastify, opts) {
         password: password,
       };      
       usersRepository.save(user);
-
-      return reply.redirect("/users");
+      // return reply.redirect("/users");
+        return reply.redirect(fastify.reverse('users'));
     },
   );
-
-
   // Маршрут для отображения страницы с формой создания пользователя
-  fastify.get("/users/new", async function (request, reply) {
-    return reply.view("users/new.eta");
+  fastify.get("/users/new", { name: 'newUser' } , async function (request, reply) {
+    // return reply.view("users/new.eta");
+     return reply.view('users/new.eta', { reverse: fastify.reverse.bind(fastify) });
+     
   });
 
   // Маршрут для отображения списка всех пользователей
-  fastify.get("/users", async function (request, reply) {
+  fastify.get("/users", {name: 'users'}, async function (request, reply) {
     // Вытаскиваем всех созданных пользователей из нашего репозитория
     const users = usersRepository.get();
-
     // Рендерим файл index.eta и передаем туда этот массив
-    return reply.view("users/index.eta", { users });
+    // return reply.view("users/index.eta", { users });
+     return reply.view('users/index.eta', { users, reverse: fastify.reverse.bind(fastify) });
   });
-
   fastify.get("/users/:id", async function (request, reply) {
     const user = usersRepository.find(request.params.id);
-
     if (!user) {
       return reply.status(404).send("User not found");
     }
     return reply.view("users/show.eta", { user });
   });
 
-  fastify.get("/courses", async function (request, reply) {
+  fastify.get("/courses", { name: "courses" }, async function (request, reply) {
     const term = (request.query.term || "").trim();
     let filteredCourses = coursesRepository.get();
-
     if (term) {
       const lowerTerm = term.toLowerCase();
 
@@ -159,13 +158,15 @@ export default async function (fastify, opts) {
     const data = {
       courses: filteredCourses,
       term: term,
+         reverse: fastify.reverse.bind(fastify), 
     };
-
-    return reply.view("courses/courses.eta", data);
+    // return reply.view("courses/courses.eta", data);
+       return reply.view("courses/courses.eta", data);
   });
   fastify.post(
     "/courses",
     {
+      name:"createCourse",
       attachValidation: true,
       schema: {
         body: yup.object({        
@@ -191,26 +192,25 @@ export default async function (fastify, opts) {
           title,
           description,
           error: request.validationError,
+             reverse: fastify.reverse.bind(fastify), 
         };
-
         return reply.view("courses/new_course.eta", data);
       }
-
-
       const course = {
         title: title.trim(),
         description: description.trim(),
       };
-
       coursesRepository.save(course);
 
-      return reply.redirect("/courses");
+       // ВМЕСТО: reply.redirect("/courses")
+      // ИСПОЛЬЗУЕМ: генерацию пути по имени маршрута.
+      return reply.redirect(fastify.reverse("courses"));
     },
   );
-
   // Маршрут для отображения страницы с формой создания пользователя
-  fastify.get("/courses/new_course", async function (request, reply) {
-    return reply.view("courses/new_course.eta");
+  fastify.get("/courses/new_course",{ name: "newCourse" }, async function (request, reply) {
+    // return reply.view("courses/new_course.eta");
+  return reply.view("courses/new_course.eta", { reverse: fastify.reverse.bind(fastify) });
   });
   // ==================================================
   fastify.get("/hello", async function (request, reply) {
@@ -304,7 +304,6 @@ export default async function (fastify, opts) {
     reply.type("text/html;charset=utf-8");
     return reply.send(`Идентификатор пользователя: ${escapedId}`);
   });
-
   // 1. Хук проверки источника запроса (preHandler)
   fastify.addHook("preHandler", async (request, reply) => {
     if (request.method === "POST") {
@@ -316,9 +315,10 @@ export default async function (fastify, opts) {
       }
     }
   });
-
   // // 2. Обработчик POST-запроса, который меняет данные
   // fastify.post("/change-data", async function (request, reply) {
   //   return reply.send("Данные изменены успешно!");
   // });
+    console.log('--- СПИСОК ИМЕНОВАННЫХ МАРШРУТОВ ---');
+  console.log(fastify.reverse); 
 }

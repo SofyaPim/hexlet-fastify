@@ -7,7 +7,7 @@
     <%= it.error.inner && it.error.inner.length > 0 ? it.error.inner[0].message : it.error.message %>
   </div>
 <% } %>
-  <form action="/users" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+  <form action="<%= it.reverse('createUser') %>" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
     <div>
       <label style="display: block; margin-bottom: 5px;">Имя пользователя:</label>
       <input 

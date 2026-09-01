@@ -3,7 +3,7 @@
 <div style="max-width: 600px; margin: 20px auto; font-family: sans-serif;">
   <h2>Академия Чародейства и Волшебства «Хогвартс»</h2>
 
-  <form action="/courses" method="GET" style="margin-bottom: 25px; display: flex; gap: 10px;">
+  <form action="<%= it.reverse('createCourse') %>" method="GET" style="margin-bottom: 25px; display: flex; gap: 10px;">
     <input 
       type="search" 
       name="term" 
