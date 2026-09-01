@@ -15,7 +15,14 @@ const reversePlugin = (app, _options, done) => {
       return params[key];
     });
   });
-
+  
+    app.addHook('preHandler', async (request, reply) => {
+    // fastify-view позволяет настраивать глобальные переменные через reply.locals
+    reply.locals = {
+      ...reply.locals,
+      reverse: app.reverse.bind(app)
+    };
+  });
   app.addHook("onRoute", ({ name, url, method }) => {
     if (!name) {
       return;

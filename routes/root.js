@@ -10,11 +10,7 @@ const topCartoons = [
   { id: 2, title: "Холодное сердце 2 (Frozen II)", boxOffice: "$1.45 млрд", year: 2019 },
   { id: 3, title: "Братья Супер Марио в кино (The Super Mario Bros. Movie)", boxOffice: "$1.36 млрд", year: 2023 },
 ];
-const topMovies = [
-  { id: 1, title: "Аватар (Avatar)", boxOffice: "$2.92 млрд", year: 2009 },
-  { id: 2, title: "Мстители: Финал (Avengers: Endgame)", boxOffice: "$2.79 млрд", year: 2019 },
-  { id: 3, title: "Аватар: Путь воды (Avatar: The Way of Water)", boxOffice: "$2.32 млрд", year: 2022 },
-];
+
 
 const topSeries = [
   { id: 1, title: "Игра престолов (Game of Thrones)", rating: "9.2", network: "HBO" },
@@ -79,25 +75,7 @@ export default async function (fastify, opts) {
     return reply.view("show.eta", { cartoon });
   });
 
-  // Маршрут для фильмов
-  fastify.get("/movies", async function (request, reply) {
-    const data = {
-      title: "Топ крутых фильмов в истории",
-      movies: topMovies,
-    };
-    return reply.view("movies.eta", data);
-  });
-  // Страница конкретного фильма
-  fastify.get("/movie/:id", async function (request, reply) {
-    const { id } = request.params;
-    const movie = topMovies.find((m) => m.id === Number(id));
 
-    if (!movie) {
-      return reply.status(404).send("Фильм не найден");
-    }
-
-    return reply.view("movie-show.eta", { movie });
-  });
 
   // Маршрут для сериалов
   fastify.get("/series", async function (request, reply) {

@@ -6,7 +6,9 @@
   <% it.movies.forEach((movie) => { %>
     <li>
      
-      <a href="/movie/<%= movie.id %>"><strong><%= movie.title %></strong></a> 
+      <a  href="<%= it.reverse('movieShow', { id: movie.id }) %>">
+      <strong><%= movie.title %></strong>
+      </a> 
    
     </li>
   <% }) %>

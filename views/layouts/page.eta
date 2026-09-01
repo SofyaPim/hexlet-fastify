@@ -13,9 +13,9 @@
     <nav>
       <ul style="display: flex; gap: 15px; list-style: none; padding: 0;">
         <li><a href="/">Мультфильмы</a></li>
-        <li><a href="/movies">Фильмы</a></li>
+        <li><a href="<%= it.reverse('movies') %>">Фильмы</a></li>
         <li><a href="/series">Сериалы</a></li>
-        <li><a href="/courses">Курсы Хогвартса</a></li>
+        <li><a href="<%= it.reverse('courses') %>">Курсы Хогвартса</a></li>
         <li><a href="/users">Пользователи</a></li>
 
       </ul>
