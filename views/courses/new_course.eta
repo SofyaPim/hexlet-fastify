@@ -3,7 +3,11 @@
 
 <div style="max-width: 500px; margin: 20px auto; font-family: sans-serif;">
   <h2>Добавить новую дисциплину Хогвартса</h2>
-
+  <% if (it.error) { %>
+  <div style="color: red; margin-bottom: 15px; font-weight: bold;">
+    <%= it.error.inner && it.error.inner.length > 0 ? it.error.inner[0].message : it.error.message %>
+  </div>
+<% } %>
   <form action="/courses" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
     <div>
       <label style="display: block; margin-bottom: 5px;">Название курса:</label>
@@ -13,6 +17,7 @@
         required 
         placeholder="Например: Заклинания"
         style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+          value="<%= it.title || '' %>" 
       />
     </div>
 
@@ -24,7 +29,7 @@
         rows="4"
         placeholder="Опишите, какие магические искусства будут изучаться..."
         style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: sans-serif;"
-      ></textarea>
+      ><%= it.description || '' %></textarea>
     </div>
 
     <button type="submit" style="padding: 10px; background-color: #4a154b; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">

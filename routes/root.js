@@ -1,3 +1,5 @@
+import yup from "yup";
+
 const state = {
   users: [],
 };
@@ -65,28 +67,71 @@ const usersRepository = {
   },
 };
 export default async function (fastify, opts) {
+  // валидация
+  fastify.post(
+    "/users",
+    {
+      attachValidation: true,
+      schema: {
+        body: yup.object({       
+          username: yup.string().min(2, "Имя должно быть не меньше двух символов"),
+          email: yup.string().email("Некорректный формат email"),
+          password: yup.string().min(5, "Пароль должен быть не меньше 5 символов"),
+          passwordConfirmation: yup
+            .string()
+            .min(5, "Подтверждение пароля должно быть не меньше 5 символов")
+            .oneOf([yup.ref("password")], "Пароли не совпадают"),
+        }),
+      },
+      validatorCompiler: ({ schema }) => {
+        return (data) => {
+          try {
+            const result = schema.validateSync(data, { abortEarly: false });
+            return { value: result };
+          } catch (e) {
+            return { error: e };
+          }
+        };
+      },
+    },
+    async (request, reply) => {
+      const { username, email, password, passwordConfirmation } = request.body;
 
-  fastify.post('/users', async function (request, reply) {
-    const user = {
-      username: request.body.username.trim(),
-      email: request.body.email.trim().toLowerCase(),
-    };
-    
-    usersRepository.save(user);
-    return reply.redirect('/users');
-  });
+      if (request.validationError) {
+        const data = {
+          username,
+          email,
+          password,
+          passwordConfirmation,
+          error: request.validationError,
+        };
+
+        return reply.view("/users/new", data);
+      }
+      const user = {
+        username: username.trim(),
+        email: email.trim().toLowerCase(),
+        password: password,
+      };      
+      usersRepository.save(user);
+
+      return reply.redirect("/users");
+    },
+  );
+
+
   // Маршрут для отображения страницы с формой создания пользователя
   fastify.get("/users/new", async function (request, reply) {
     return reply.view("users/new.eta");
   });
 
-    // Маршрут для отображения списка всех пользователей
-  fastify.get('/users', async function (request, reply) {
+  // Маршрут для отображения списка всех пользователей
+  fastify.get("/users", async function (request, reply) {
     // Вытаскиваем всех созданных пользователей из нашего репозитория
     const users = usersRepository.get();
-    
+
     // Рендерим файл index.eta и передаем туда этот массив
-    return reply.view('users/index.eta', { users });
+    return reply.view("users/index.eta", { users });
   });
 
   fastify.get("/users/:id", async function (request, reply) {
@@ -98,7 +143,6 @@ export default async function (fastify, opts) {
     return reply.view("users/show.eta", { user });
   });
 
- 
   fastify.get("/courses", async function (request, reply) {
     const term = (request.query.term || "").trim();
     let filteredCourses = coursesRepository.get();
@@ -119,20 +163,56 @@ export default async function (fastify, opts) {
 
     return reply.view("courses/courses.eta", data);
   });
-    fastify.post('/courses', async function (request, reply) {
-    const course = {
-      title: request.body.title.trim(),
-      description: request.body.description.trim(),
-    };
-    
-    coursesRepository.save(course);
-    return reply.redirect('/courses');
-  });
+  fastify.post(
+    "/courses",
+    {
+      attachValidation: true,
+      schema: {
+        body: yup.object({        
+          title: yup.string().min(2, "Название курса должно быть не меньше двух символов"),
+          description: yup.string().min(10, "Описание должно содержать не менее 10 символов"),
+        }),
+      },
+      validatorCompiler: ({ schema }) => {
+        return (data) => {
+          try {
+            const result = schema.validateSync(data, { abortEarly: false });
+            return { value: result };
+          } catch (e) {
+            return { error: e };
+          }
+        };
+      },
+    },
+    async (request, reply) => {
+      const { title, description } = request.body;
+      if (request.validationError) {
+        const data = {
+          title,
+          description,
+          error: request.validationError,
+        };
+
+        return reply.view("courses/new_course.eta", data);
+      }
+
+
+      const course = {
+        title: title.trim(),
+        description: description.trim(),
+      };
+
+      coursesRepository.save(course);
+
+      return reply.redirect("/courses");
+    },
+  );
+
   // Маршрут для отображения страницы с формой создания пользователя
   fastify.get("/courses/new_course", async function (request, reply) {
     return reply.view("courses/new_course.eta");
   });
-// ==================================================
+  // ==================================================
   fastify.get("/hello", async function (request, reply) {
     const name = request.query.name || "World";
 
@@ -225,7 +305,7 @@ export default async function (fastify, opts) {
     return reply.send(`Идентификатор пользователя: ${escapedId}`);
   });
 
-  // 1. Хук проверки источника запроса (preHandler) из урока
+  // 1. Хук проверки источника запроса (preHandler)
   fastify.addHook("preHandler", async (request, reply) => {
     if (request.method === "POST") {
       const secFetchSite = request.headers["sec-fetch-site"];
@@ -237,11 +317,8 @@ export default async function (fastify, opts) {
     }
   });
 
-  // 2. Обработчик POST-запроса, который меняет данные
-  fastify.post("/change-data", async function (request, reply) {
-    return reply.send("Данные изменены успешно!");
-  });
-
-
+  // // 2. Обработчик POST-запроса, который меняет данные
+  // fastify.post("/change-data", async function (request, reply) {
+  //   return reply.send("Данные изменены успешно!");
+  // });
 }
-

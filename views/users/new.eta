@@ -2,7 +2,11 @@
 
 <div style="max-width: 400px; margin: 20px auto; font-family: sans-serif;">
   <h2>Регистрация нового пользователя</h2>
-
+  <% if (it.error) { %>
+  <div style="color: red; margin-bottom: 15px; font-weight: bold;">
+    <%= it.error.inner && it.error.inner.length > 0 ? it.error.inner[0].message : it.error.message %>
+  </div>
+<% } %>
   <form action="/users" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
     <div>
       <label style="display: block; margin-bottom: 5px;">Имя пользователя:</label>
@@ -12,6 +16,7 @@
         required 
         placeholder="Введите имя..."
         style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+        value="<%= it.username ?? '' %>"
       />
     </div>
 
@@ -23,6 +28,29 @@
         required 
         placeholder="user@example.com"
         style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+        value="<%= it.email ?? '' %>"
+      />
+    </div>
+    <div>
+      <label style="display: block; margin-bottom: 5px;">Пароль:</label>
+      <input 
+        type="password" 
+        name="password" 
+        required 
+        
+        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+        value="<%= it.password ?? '' %>"
+      />
+    </div>
+    <div>
+      <label style="display: block; margin-bottom: 5px;">Подтверждение пароля:</label>
+      <input 
+        type="password" 
+        name="passwordConfirmation" 
+        required 
+        
+        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+        value="<%= it.passwordConfirmation ?? '' %>"
       />
     </div>
 
