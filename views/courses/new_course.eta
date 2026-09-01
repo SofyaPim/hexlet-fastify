@@ -1,0 +1,36 @@
+<% layout("../layouts/page") %> 
+
+
+<div style="max-width: 500px; margin: 20px auto; font-family: sans-serif;">
+  <h2>Добавить новую дисциплину Хогвартса</h2>
+
+  <form action="/courses" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+    <div>
+      <label style="display: block; margin-bottom: 5px;">Название курса:</label>
+      <input 
+        type="text" 
+        name="title" 
+        required 
+        placeholder="Например: Заклинания"
+        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+      />
+    </div>
+
+    <div>
+      <label style="display: block; margin-bottom: 5px;">Описание курса:</label>
+      <textarea 
+        name="description" 
+        required 
+        rows="4"
+        placeholder="Опишите, какие магические искусства будут изучаться..."
+        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: sans-serif;"
+      ></textarea>
+    </div>
+
+    <button type="submit" style="padding: 10px; background-color: #4a154b; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+      Внести в реестр Хогвартса
+    </button>
+  </form>
+
+  <p style="margin-top: 15px;"><a href="/courses">← Вернуться к списку курсов</a></p>
+</div>

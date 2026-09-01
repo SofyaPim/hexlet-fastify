@@ -101,7 +101,6 @@ export default async function (fastify, opts) {
  
   fastify.get("/courses", async function (request, reply) {
     const term = (request.query.term || "").trim();
-
     let filteredCourses = coursesRepository.get();
 
     if (term) {
@@ -110,17 +109,15 @@ export default async function (fastify, opts) {
       filteredCourses = filteredCourses.filter((course) => {
         const matchTitle = course.title.toLowerCase().includes(lowerTerm);
         const matchDescription = course.description.toLowerCase().includes(lowerTerm);
-
         return matchTitle || matchDescription;
       });
     }
-
     const data = {
       courses: filteredCourses,
       term: term,
     };
 
-    return reply.view("courses.eta", data);
+    return reply.view("courses/courses.eta", data);
   });
     fastify.post('/courses', async function (request, reply) {
     const course = {
@@ -132,8 +129,8 @@ export default async function (fastify, opts) {
     return reply.redirect('/courses');
   });
   // Маршрут для отображения страницы с формой создания пользователя
-  fastify.get("/courses/new", async function (request, reply) {
-    return reply.view("courses/new.eta");
+  fastify.get("/courses/new_course", async function (request, reply) {
+    return reply.view("courses/new_course.eta");
   });
 // ==================================================
   fastify.get("/hello", async function (request, reply) {
