@@ -1,3 +1,7 @@
+const state = {
+  users: [],
+};
+
 // const data = { phones: ['+123'], domains: ['test.com'] };
 const topCartoons = [
   { id: 1, title: "Головоломка 2 (Inside Out 2)", boxOffice: "$1.70 млрд", year: 2024 },
@@ -29,7 +33,109 @@ const users = {
     },
   ],
 };
+
+let hogwartsCourses = [
+  { id: 1, title: "Защита от тёмных искусств", description: "Изучение заклинаний Экспеллиармус, Ридикулус и вызов Патронуса." },
+  { id: 2, title: "Зельеварение", description: "Приготовление сложных составов: от жидкой удачи Феликс Фелицис до Оборотного зелья." },
+  { id: 3, title: "Трансфигурация", description: "Искусство превращения спичек в иголки, а крыс — в кубки для вина." },
+  { id: 4, title: "Прорицание", description: "Гадание на кофейной гуще, чтение хрустальных шаров и предсказание мрака." },
+];
+
+let nextCourseId = 5;
+const coursesRepository = {
+  get: () => hogwartsCourses,
+  find: (id) => hogwartsCourses.find((course) => String(course.id) === String(id)),
+  save: (course) => {
+    course.id = nextCourseId++;
+    hogwartsCourses.push(course);
+    return course;
+  },
+};
+// Имитируем базу данных в памяти сервера
+let usersCollection = [];
+let nextId = 1;
+
+const usersRepository = {
+  get: () => usersCollection,
+  find: (id) => usersCollection.find((user) => String(user.id) === String(id)),
+  save: (user) => {
+    user.id = nextId++;
+    usersCollection.push(user);
+    return user;
+  },
+};
 export default async function (fastify, opts) {
+
+  fastify.post('/users', async function (request, reply) {
+    const user = {
+      username: request.body.username.trim(),
+      email: request.body.email.trim().toLowerCase(),
+    };
+    
+    usersRepository.save(user);
+    return reply.redirect('/users');
+  });
+  // Маршрут для отображения страницы с формой создания пользователя
+  fastify.get("/users/new", async function (request, reply) {
+    return reply.view("users/new.eta");
+  });
+
+    // Маршрут для отображения списка всех пользователей
+  fastify.get('/users', async function (request, reply) {
+    // Вытаскиваем всех созданных пользователей из нашего репозитория
+    const users = usersRepository.get();
+    
+    // Рендерим файл index.eta и передаем туда этот массив
+    return reply.view('users/index.eta', { users });
+  });
+
+  fastify.get("/users/:id", async function (request, reply) {
+    const user = usersRepository.find(request.params.id);
+
+    if (!user) {
+      return reply.status(404).send("User not found");
+    }
+    return reply.view("users/show.eta", { user });
+  });
+
+ 
+  fastify.get("/courses", async function (request, reply) {
+    const term = (request.query.term || "").trim();
+
+    let filteredCourses = coursesRepository.get();
+
+    if (term) {
+      const lowerTerm = term.toLowerCase();
+
+      filteredCourses = filteredCourses.filter((course) => {
+        const matchTitle = course.title.toLowerCase().includes(lowerTerm);
+        const matchDescription = course.description.toLowerCase().includes(lowerTerm);
+
+        return matchTitle || matchDescription;
+      });
+    }
+
+    const data = {
+      courses: filteredCourses,
+      term: term,
+    };
+
+    return reply.view("courses.eta", data);
+  });
+    fastify.post('/courses', async function (request, reply) {
+    const course = {
+      title: request.body.title.trim(),
+      description: request.body.description.trim(),
+    };
+    
+    coursesRepository.save(course);
+    return reply.redirect('/courses');
+  });
+  // Маршрут для отображения страницы с формой создания пользователя
+  fastify.get("/courses/new", async function (request, reply) {
+    return reply.view("courses/new.eta");
+  });
+// ==================================================
   fastify.get("/hello", async function (request, reply) {
     const name = request.query.name || "World";
 
@@ -116,54 +222,29 @@ export default async function (fastify, opts) {
       return reply.send("Передайте ?id=");
     }
 
-    // 1. СНАЧАЛА ДЛЯ ПРОВЕРКИ УЯЗВИМОСТИ: отдаем как есть
-    // return reply.type('text/html; charset=utf-8').send(`Идентификатор пользователя: ${id}`);
-
-    // // 2. ДЛЯ ЗАКРЫТИЯ УЯЗВИМОСТИ (как в теории): экранируем спецсимволы
     const escapedId = id.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     reply.type("text/html;charset=utf-8");
     return reply.send(`Идентификатор пользователя: ${escapedId}`);
   });
 
-    // 1. Хук проверки источника запроса (preHandler) из урока
-  fastify.addHook('preHandler', async (request, reply) => {
-    if (request.method === 'POST') {
-      const secFetchSite = request.headers['sec-fetch-site'];
+  // 1. Хук проверки источника запроса (preHandler) из урока
+  fastify.addHook("preHandler", async (request, reply) => {
+    if (request.method === "POST") {
+      const secFetchSite = request.headers["sec-fetch-site"];
 
       // Если запрос пришел со стороннего сайта (cross-site), отдаем 403 Forbidden
-      if (secFetchSite === 'cross-site') {
-        return reply.status(403).send('Forbidden');
+      if (secFetchSite === "cross-site") {
+        return reply.status(403).send("Forbidden");
       }
     }
   });
 
   // 2. Обработчик POST-запроса, который меняет данные
-  fastify.post('/change-data', async function (request, reply) {
-    return reply.send('Данные изменены успешно!');
+  fastify.post("/change-data", async function (request, reply) {
+    return reply.send("Данные изменены успешно!");
   });
 
-  // fastify.get("/", async function (request, reply) {
-  //   reply.send("Welcome to Hexlet!");
-  // });
-  // fastify.get("/users", (req, res) => {
-  //   res.send("GET /users");
-  // });
 
-  // fastify.post("/users", (req, res) => {
-  //   res.send("POST /users");
-  // });
-  // fastify.get("/phones", async function (request, reply) {
-  //   reply.send(data.phones);
-  // });
-
-  // fastify.get("/domains", async function (request, reply) {
-  //   reply.send(data.domains);
-  // });
 }
 
-// Файлы, которые лежат прямо в routes, отвечают по тому адресу, который объявлен в обработчике. У файла внутри поддиректории имя этой поддиректории становится началом адреса, а имя файла в адрес не попадает вовсе.
-// routes/root.js            app.get('/')      GET /
-// routes/example/index.js   app.get('/')      GET /example
-// routes/users/index.js     app.get('/:id')   GET /users/:id
-// routes/users.js           app.get('/users') GET /users

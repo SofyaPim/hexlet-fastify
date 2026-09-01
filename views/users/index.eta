@@ -1,0 +1,13 @@
+<% layout("../layouts/page") %>
+
+<h2>Список зарегистрированных пользователей</h2>
+<ul>
+  <% it.users.forEach((user) => { %>
+    <li>
+      <strong><%= user.username %></strong> — <%= user.email %> 
+      (<a href="/users/<%= user.id %>">Профиль</a>)
+    </li>
+  <% }) %>
+</ul>
+
+<p><a href="/users/new">Зарегистрировать еще одного</a></p>

@@ -1,0 +1,8 @@
+<% layout("../layouts/page.eta") %> 
+
+
+<h2>Профиль пользователя</h2>
+<p><strong>Имя:</strong> <%= it.user.username %></p>
+<p><strong>Email:</strong> <%= it.user.email %></p>
+
+<p><a href="/users">← К списку пользователей</a></p>

@@ -15,6 +15,9 @@
         <li><a href="/">Мультфильмы</a></li>
         <li><a href="/movies">Фильмы</a></li>
         <li><a href="/series">Сериалы</a></li>
+        <li><a href="/courses">Курсы Хогвартса</a></li>
+        <li><a href="/users">Пользователи</a></li>
+
       </ul>
     </nav>
   </header>
