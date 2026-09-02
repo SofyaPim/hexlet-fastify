@@ -8,6 +8,7 @@
 <body>
 
   <header> 
+
     <h1>Лейауты в Eta</h1>
     <h2>КиноПортал на Eta</h2>
     <nav>
@@ -21,7 +22,7 @@
       </ul>
 
 
-            <!-- БЛОК АУТЕНТИФИКАЦИИ (Исправленный вариант через it.) -->
+            <!-- БЛОК АУТЕНТИФИКАЦИИ  -->
       <div style="margin-top: 15px; padding: 10px; border-top: 1px solid #ccc;">
         <% if (it.username) { %>
           <div style="color: #155724; margin-bottom: 5px;">Вы вошли как: <strong><%= it.username %></strong></div>
@@ -36,9 +37,21 @@
 
 
     </nav>
+    <% if (it.flash && it.flash.length > 0) { %>
+    <div style="margin: 15px 20px;">
+      <% it.flash.forEach((message) => { %>
+        <div style="padding: 10px; margin-bottom: 10px; border-radius: 4px; font-family: sans-serif;
+          background-color: <%= message.type === 'success' ? '#d4edda' : '#fff3cd' %>;
+          color: <%= message.type === 'success' ? '#155724' : '#856404' %>;
+          border: 1px solid <%= message.type === 'success' ? '#c3e6cb' : '#ffeeba' %>;">          
+          <%= message.message %>          
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
   </header>
 
-  <!-- Основной контент страницы -->
+  
   <main>
     <%~ it.body %>
   </main>
