@@ -24,6 +24,11 @@
  <%~ it.body %>
  <footer>
    <a href="https://github.com/SofyaPim/hexlet-fastify">SofyaPim/hexlet-fastify</a>
+<% if (!it.visited) { %>
+  <div class="alert alert-info">
+    Это сообщение показывается только один раз. Если вы хотите увидеть его снова, сотрите куки.
+  </div>
+<% } %>
  </footer>
 </body>
 </html>
