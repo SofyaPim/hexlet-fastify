@@ -1,21 +1,15 @@
 import yup from "yup";
-let usersCollection = [];
-let nextId = 1;
 
-const usersRepository = {
-  get: () => usersCollection,
-  find: (id) => usersCollection.find((user) => String(user.id) === String(id)),
-  save: (user) => {
-    user.id = nextId++;
-    usersCollection.push(user);
-    return user;
-  },
-};
+
+
 
 export default async function (fastify, opts) {
  
+  
+
+
   fastify.get('/users', { name: 'users' }, async function (request, reply) {
-    const users = usersRepository.get();
+    const users = fastify.usersRepository.get();
     return reply.view('users/index.eta', { users, reverse: fastify.reverse.bind(fastify) });
   });
 
@@ -54,7 +48,7 @@ export default async function (fastify, opts) {
      },
      async (request, reply) => {
        const { username, email, password, passwordConfirmation } = request.body;
- 
+       
        if (request.validationError) {
          const data = {
            username,
@@ -63,24 +57,33 @@ export default async function (fastify, opts) {
            passwordConfirmation,
            error: request.validationError,
            reverse: fastify.reverse.bind(fastify),
+           flash: [{ type: 'danger', message: 'Ошибка регистрации: проверьте корректность введённых данных' }]
          };
  
-         return reply.view("/users/new", data);
+         
+
+         return reply.view("users/new.eta", data);
        }
+
+       // 2. ЕСЛИ ВСЁ ПРОШЛО УСПЕШНО
        const user = {
          username: username.trim(),
          email: email.trim().toLowerCase(),
          password: password,
        };      
-       usersRepository.save(user);
-       // return reply.redirect("/users");
-         return reply.redirect(fastify.reverse('users'));
+       
+       fastify.usersRepository.save(user);
+       
+       request.flash("success", "Вы успешно зарегистрировались в системе!");
+       
+       return reply.redirect(fastify.reverse('users'));
      },
    );
 
   fastify.get('/users/:id', async function (request, reply) {
-    const user = usersRepository.find(request.params.id);
+    const user = fastify.usersRepository.find(request.params.id);
     if (!user) return reply.status(404).send("User not found");
     return reply.view("users/show.eta", { user });
   });
 }
+
