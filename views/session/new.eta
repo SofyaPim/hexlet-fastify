@@ -1,0 +1,27 @@
+<% layout("../layouts/page") %>
+
+<div style="padding: 20px; font-family: sans-serif;">
+  <h2>Вход в систему</h2>
+
+  <!-- Вызываем через it.route -->
+  <form action="<%= it.route('createSession') %>" method="POST" style="margin-top: 20px;">
+    <div style="margin-bottom: 15px;">
+      <label for="username" style="display: block; margin-bottom: 5px; font-weight: bold;">
+        Имя пользователя (Логин):
+      </label>
+      <input type="text" id="username" name="username" required placeholder="Введите ваш логин" style="padding: 8px; width: 250px; border: 1px solid #ccc; border-radius: 4px;" />
+    </div>
+    
+    <button type="submit" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+      Войти
+    </button>
+  </form>
+
+  <p style="margin-top: 20px;">
+    <!-- Вызываем через it.route -->
+    <a href="<%= it.route('root') %>" style="color: #007bff; text-decoration: none;">
+      ← Назад на главную страницу
+    </a>
+  </p>
+</div>
+

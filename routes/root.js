@@ -36,31 +36,24 @@ const users = {
 
 
 export default async function (fastify, opts) {
-  fastify.get("/", async function (request, reply) {
-    // 1. Получаем куку visited
+ 
+  fastify.get("/", { name: "root" }, async function (request, reply) {
+   
     const visited = request.cookies.visited;
-
-    // 2. Объединяем ваши данные мультфильмов и флаг visited в один объект data
+   
     const data = {
       title: "Топ кассовых мультфильмов в мире",
       cartoons: topCartoons,
-      visited: visited, // Передаем состояние куки в шаблон
+      visited: visited, 
+      username: request.session ? request.session.username : null, 
+      route: (name, params) => fastify.reverse(name, params), 
     };
-
-    // 3. Устанавливаем куку на будущее, чтобы при следующем запросе она считалась
+    
     reply.setCookie('visited', 'true', { path: '/' });
-
-    // 4. Рендерим шаблон
+    
     return reply.view("index.eta", data);
   });
-//   fastify.get('/set', async (request, reply) => {
-//   reply.setCookie('myCookie', 'hello-world', { path: '/' }); //
-//   return { status: 'Cookie set' };
-// });
-// fastify.get('/get', async (request, reply) => {
-//   const cookieValue = request.cookies.myCookie; //
-//   return { value: cookieValue || 'Кука не найдена' };
-// });
+
 
 
   fastify.get("/hello", async function (request, reply) {

@@ -1,7 +1,18 @@
-import fp from 'fastify-plugin';
-import cookie from '@fastify/cookie'; //
+// @ts-check
+import fp from "fastify-plugin";
+import fastifyCookie from "@fastify/cookie";
+import fastifySession from "@fastify/session";
 
-// Оборачиваем в fastify-plugin, чтобы куки были доступны во всех роутах без инкапсуляции
-export default fp(async (fastify, opts) => {
-  await fastify.register(cookie);
+// Оборачиваем в fastify-plugin, чтобы сессии и куки пробросились глобально во все роуты
+export default fp(async (app, _options) => {
+  // 1. Сначала обязательно регистрируем куки
+  await app.register(fastifyCookie);
+
+  // 2. Сразу после этого регистрируем сессии
+  await app.register(fastifySession, {
+    // Секретный ключ должен быть длинным (минимум 32 символа)
+    secret: "a-secret-with-minimum-length-of-32-characters",
+    // secure: false нужен для локальной разработки (http), на продакшене (https) ставят true
+    cookie: { secure: false },
+  });
 });

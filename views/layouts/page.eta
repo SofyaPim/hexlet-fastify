@@ -8,27 +8,48 @@
 <body>
 
   <header> 
-   <h1>Лейауты в Eta</h1>
+    <h1>Лейауты в Eta</h1>
     <h2>КиноПортал на Eta</h2>
     <nav>
-      <ul style="display: flex; gap: 15px; list-style: none; padding: 0;">
+     <ul style="display: flex; gap: 15px; list-style: none; padding: 0;">
         <li><a href="/">Мультфильмы</a></li>
+        <!-- Старые ссылки работают через it.reverse -->
         <li><a href="<%= it.reverse('movies') %>">Фильмы</a></li>
         <li><a href="/series">Сериалы</a></li>
         <li><a href="<%= it.reverse('courses') %>">Курсы Хогвартса</a></li>
         <li><a href="/users">Пользователи</a></li>
-
       </ul>
+
+
+            <!-- БЛОК АУТЕНТИФИКАЦИИ (Исправленный вариант через it.) -->
+      <div style="margin-top: 15px; padding: 10px; border-top: 1px solid #ccc;">
+        <% if (it.username) { %>
+          <div style="color: #155724; margin-bottom: 5px;">Вы вошли как: <strong><%= it.username %></strong></div>
+          <form action="<%= it.route('deleteSession') %>" method="POST" style="display: inline;">
+            <button type="submit" style="padding: 4px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Выйти</button>
+          </form>
+        <% } else { %>
+          <div style="color: #856404; margin-bottom: 5px;">Вы зашли как гость</div>
+          <a href="<%= it.route('newSession') %>" style="display: inline-block; padding: 5px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Войти в систему</a>
+        <% } %>
+      </div>
+
+
     </nav>
   </header>
- <%~ it.body %>
- <footer>
-   <a href="https://github.com/SofyaPim/hexlet-fastify">SofyaPim/hexlet-fastify</a>
-<% if (!it.visited) { %>
-  <div class="alert alert-info">
-    Это сообщение показывается только один раз. Если вы хотите увидеть его снова, сотрите куки.
-  </div>
-<% } %>
- </footer>
+
+  <!-- Основной контент страницы -->
+  <main>
+    <%~ it.body %>
+  </main>
+
+  <footer>
+    <a href="https://github.com/SofyaPim/hexlet-fastify">SofyaPim/hexlet-fastify</a>
+    <% if (!it.visited) { %>
+      <div class="alert alert-info" style="margin-top: 10px; background: #e2f0d9; padding: 5px;">
+        Это сообщение показывается только один раз. Если вы хотите увидеть его снова, сотрите куки.
+      </div>
+    <% } %>
+  </footer>
 </body>
 </html>
