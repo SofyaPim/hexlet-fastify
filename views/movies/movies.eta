@@ -1,4 +1,4 @@
-<% layout("./layouts/page.eta") %>
+<% layout("../layouts/page.eta") %>
 
 <h2><%= it.title %></h2> 
 
@@ -13,6 +13,8 @@
     </li>
   <% }) %>
 </ol>
+<a href="<%= it.reverse('newMovie') %>">Добавить новый фильм</a>
+
 
 
 

@@ -24,11 +24,30 @@
   <% } else { %>
     <div style="display: flex; flex-direction: column; gap: 15px;">
       <% it.courses.forEach((course) => { %>
-        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 6px; background: #fdfbf7;">
-          <h4 style="margin: 0 0 10px 0; color: #4a154b;"><%= course.title %></h4>
-          <p style="margin: 0; color: #555; font-size: 14px;"><%= course.description %></p>
-        </div>
-      <% }) %>
+  <div style="border: 1px solid #ddd; padding: 15px; border-radius: 6px; background: #fdfbf7; display: flex; flex-direction: column; justify-content: space-between; gap: 15px;">
+    <div>
+      <h4 style="margin: 0 0 10px 0; color: #4a154b;"><%= course.title %></h4>
+      <p style="margin: 0; color: #555; font-size: 14px;"><%= course.description %></p>
+    </div>
+
+    <!-- БЛОК УПРАВЛЕНИЯ КУРСОМ -->
+    <div style="display: flex; gap: 10px; align-items: center; border-top: 1px dashed #ddd; padding-top: 10px;">
+      <a href="<%= it.reverse('editCourse', { id: course.id }) %>" 
+         style="padding: 6px 12px; background: #6f2b70; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">
+        Редактировать
+      </a>
+
+      <form action="<%= it.reverse('deleteCourse', { id: course.id }) %>" method="POST" style="margin: 0;">
+        <button type="submit" 
+                onclick="return confirm('Вы уверены, что хотите отменить этот курс в Хогвартсе?')"
+                style="padding: 6px 12px; background: #a32a2a; color: white; border: none; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">
+          Удалить
+        </button>
+      </form>
+    </div>
+  </div>
+<% }) %>
+
     </div>
   <% } %>
   <p><a href="/courses/new_course" style="display: inline-block; padding: 10px 15px; background: #4a154b; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">+ Добавить новый курс</a></p>

@@ -1,4 +1,4 @@
-<% layout("./layouts/page.eta") %>
+<% layout("../layouts/page.eta") %>
 
 <h2>Больше о фильме</h2>
 <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; max-width: 400px; margin-bottom: 15px;">

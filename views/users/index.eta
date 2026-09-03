@@ -5,7 +5,8 @@
   <% it.users.forEach((user) => { %>
     <li>
       <strong><%= user.username %></strong> — <%= user.email %> 
-      (<a href="<%= it.reverse('users', { id: user.id }) %>">Профиль</a>)
+      (<a href="<%= it.reverse('userShow', { id: user.id }) %>">Профиль</a>)
+
     </li>
   <% }) %>
 </ul>

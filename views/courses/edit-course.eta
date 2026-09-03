@@ -1,0 +1,35 @@
+<% layout("../layouts/page.eta") %>
+<div style="max-width: 600px; margin: 20px auto; font-family: sans-serif;">
+<h1 style="color: #4a154b;">Редактировать курс магии</h1>
+  <div style="border: 1px solid #ddd; padding: 25px; border-radius: 6px; background: #fdfbf7;">
+      <form action="<%= it.reverse('updateCourse', { id: it.course.id }) %>" method="POST">
+      
+      <div style="margin-bottom: 20px;">
+        <label for="title" style="display: block; margin-bottom: 8px; color: #4a154b; font-weight: bold; font-size: 14px;">
+          Название дисциплины:
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value="<%= it.course.title %>"
+          required
+          style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;"
+        />
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label for="description" style="display: block; margin-bottom: 8px; color: #4a154b; font-weight: bold; font-size: 14px;">
+          Описание заклинаний:
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          rows="5"
+          style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: sans-serif; resize: vertical;"
+        ><%= it.course.description %></textarea>
+      </div>
+
+
+</div>
+</div>

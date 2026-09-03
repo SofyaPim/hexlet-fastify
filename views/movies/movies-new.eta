@@ -1,0 +1,33 @@
+<% layout("../layouts/page.eta") %>
+
+<h1>Добавить новый фильм в топ</h1>
+<form action="<%= it.reverse('createMovie') %>" method="POST">
+  <div>
+    <label for="title">Название фильма:</label>
+    <br>
+    <input type="text" id="title" name="title" required placeholder="Например, Интерстеллар">
+  </div>
+  
+  <br>
+  
+  <div>
+    <label for="boxOffice">Кассовые сборы:</label>
+    <br>
+    <input type="text" id="boxOffice" name="boxOffice" placeholder="Например, $1.5 млрд">
+  </div>
+  
+  <br>
+  
+  <div>
+    <label for="year">Год выпуска:</label>
+    <br>
+    <input type="number" id="year" name="year" required placeholder="Например, 2014">
+  </div>
+
+  <br>
+
+  <div>
+    <button type="submit">Сохранить фильм</button>
+    <a href="<%= it.reverse('movies') %>">Назад к списку</a>
+  </div>
+</form>
